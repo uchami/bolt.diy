@@ -1,0 +1,37 @@
+# deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bolt-preprod # Name for the deployment object
+spec:
+  replicas: 1 # Start with 2 instances (Pods)
+  selector:
+    matchLabels:
+      app: bolt-preprod # Label selector to find Pods
+  template:
+    metadata:
+      labels:
+        app: bolt-preprod # Label applied to Pods
+    spec:
+      containers:
+      - name: bolt-preprod # Name for the container within the Pod
+        # --- IMPORTANT: Use the full path to your *application* image ---
+        image: BOLT_IMAGE
+        ports:
+        - containerPort: 5173 # Port exposed in your Dockerfile
+        env:
+        # Define environment variables needed by your app
+        # You used SPRING_PROFILE in your CMD, let's set it here
+        # - name: VITE_LOG_LEVEL
+        #   value: "debug" # Or "default", "staging", etc. Consider using ConfigMaps for production.
+        # Add other environment variables if needed
+        # - name: ANOTHER_VAR
+        #   value: "some_value" 
+      # Optional: Add resource requests/limits, probes, etc. here for production readiness
+      # resources::
+      #   requests:
+      #     memory: "256Mi"
+      #     cpu: "250m" # 0.25 vCPU
+      #   limits:
+      #     memory: "512Mi"
+      #     cpu: "500m" # 0.5 vCPU

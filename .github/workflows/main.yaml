@@ -1,0 +1,69 @@
+name: Deploy React Frontend and Node Backend
+
+on:
+  push:
+    branches: [ "main" ] # Or your main branch name
+  pull_request:
+    branches: [ "main" ]
+ 
+env:
+  GCP_PROJECT_ID: feedback-center 
+  GCP_REGION: us-central1
+  ARTIFACT_REGISTRY: us-central1-docker.pkg.dev/feedback-center/bolt-preprod
+  
+  IMAGE: ${{ github.sha }}
+  KUBERNETES_NAMESPACE: bolt-preprod
+  DEPLOYMENT_NAME: bolt-preprod
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      image: ${{ steps.build.outputs.image }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+          
+      - name: Build frontend
+        run: |
+          echo npm ci
+          echo npm run build
+          
+      - id: "auth"
+        uses: "google-github-actions/auth@v1"
+        with:
+          credentials_json: "${{ secrets.GCP_SA_KEY_JSON }}"
+
+      - name: "Set up Cloud SDK"
+        uses: "google-github-actions/setup-gcloud@v1"
+
+      - name: "Use gcloud CLI"
+        run: "gcloud info"
+        
+
+      - name: "Docker auth"
+        run: |-
+          gcloud auth configure-docker ${{ env.GCP_REGION }}-docker.pkg.dev --quiet
+
+      - name: Build image
+        run: |-
+          docker build . --file Dockerfile --tag ${{ env.ARTIFACT_REGISTRY }}/${{ env.IMAGE }}
+        working-directory: .
+
+      - name: Push image
+        run: docker push ${{ env.ARTIFACT_REGISTRY }}/${{ env.IMAGE }}
+
+
+    # Deploy the Docker image to the GKE cluster
+      - name: Configure gcloud
+        run: |-
+          gcloud config set project feedback-center
+          gcloud container clusters get-credentials pre --zone us-central1 --project feedback-center
+          
+      - name: Install gke-gcloud-auth-plugin
+        run: gcloud components install gke-gcloud-auth-plugin
+          
+      - name: Deploy frontend
+        run: |-
+          kubectl apply -f deployment.yaml --validate=false

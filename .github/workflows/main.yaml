@@ -66,4 +66,5 @@ jobs:
           
       - name: Deploy frontend
         run: |-
+          sed -i "s|IMAGE|${{ env.IMAGE }}|" deployment.yaml
           kubectl apply -f deployment.yaml --validate=false

@@ -9,7 +9,7 @@ on:
 env:
   GCP_PROJECT_ID: feedback-center 
   GCP_REGION: southamerica-west1-a
-  ARTIFACT_REGISTRY: us-central1-docker.pkg.dev/feedback-center/bolt-preprod
+  ARTIFACT_REGISTRY: southamerica-west1-a-docker.pkg.dev/feedback-center/bolt-preprod
   
   IMAGE: ${{ github.sha }}
   KUBERNETES_NAMESPACE: bolt-preprod

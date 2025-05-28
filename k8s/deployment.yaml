@@ -16,7 +16,7 @@ spec:
       containers:
       - name: bolt-preprod # Name for the container within the Pod
         # --- IMPORTANT: Use the full path to your *application* image ---
-        image: BOLT_IMAGE
+        image: IMAGE
         ports:
         - containerPort: 5173 # Port exposed in your Dockerfile
         env:

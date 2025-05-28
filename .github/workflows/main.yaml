@@ -1,4 +1,4 @@
-name: Deploy React Frontend and Node Backend
+name: Deploy Bolt Preprod
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
  
 env:
   GCP_PROJECT_ID: feedback-center 
-  GCP_REGION: us-central1
+  GCP_REGION: southamerica-west1-a
   ARTIFACT_REGISTRY: us-central1-docker.pkg.dev/feedback-center/bolt-preprod
   
   IMAGE: ${{ github.sha }}

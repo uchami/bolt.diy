@@ -66,5 +66,5 @@ jobs:
           
       - name: Deploy frontend
         run: |-
-          sed -i "s|IMAGE|${{ env.IMAGE }}|" k8s/deployment.yaml
+          sed -i "s|IMAGE|southamerica-west1-docker.pkg.dev/feedback-center/bolt-preprod/${{ env.IMAGE }}:latest|" k8s/deployment.yaml
           kubectl apply -f k8s/deployment.yaml -n preprod-rayapp --validate=false
